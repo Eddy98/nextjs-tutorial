@@ -1,3 +1,4 @@
+// by importing the global css file in our root layout we are adding global styles to the application
 import '@/app/ui/global.css';
 import { inter } from '@/app/ui/fonts';
 
