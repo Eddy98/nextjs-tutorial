@@ -79,3 +79,23 @@ One benefit of using layouts in Next.js is that on navigation, only the page com
 `/app/layout.tsx` is the root layout, and it is requried.
 
 Any UI you add to the root layout will be shared across all pages in your application. You can use the root layout to modify your <html> and <body> tags, and add metadata (you'll learn more about metadata in a later chapter).
+
+## Chapter 5 - Navigating Between Pages
+
+### Why optimize navigation?
+
+To link between pages, you'd traditionally use the `<a>` HTML element. At the moment, the sidebar links use `<a>` elements, but notice what happens when you navigate between the home, invoices, and customers pages on your browser.
+
+Did you see it?
+
+There's a full page refresh on each page navigation!
+
+In next.js we can use the `Link` component, which gives us:
+
+- Automatic code-splitting and prefetching
+
+To improve the navigation experience, Next.js automatically code splits your application by route segments/
+
+Splitting code by routes means that pages become isolated. If a certain page throws an error, the rest of the application will still work.
+
+Furthermore, in production, whenever <Link> components appear in the browser's viewport, Next.js automatically prefetches the code for the linked route in the background. This makes the re-direct instant.
