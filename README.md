@@ -94,8 +94,22 @@ In next.js we can use the `Link` component, which gives us:
 
 - Automatic code-splitting and prefetching
 
-To improve the navigation experience, Next.js automatically code splits your application by route segments/
+To improve the navigation experience, Next.js automatically code splits your application by route segments. This is different from a traditional React SPA, where the browser loads all your application code on initial load.
 
 Splitting code by routes means that pages become isolated. If a certain page throws an error, the rest of the application will still work.
 
-Furthermore, in production, whenever <Link> components appear in the browser's viewport, Next.js automatically prefetches the code for the linked route in the background. This makes the re-direct instant.
+Furthermore, in production, whenever `<Link>` components appear in the browser's viewport, Next.js automatically prefetches the code for the linked route in the background. This makes the re-direct instant.
+
+## Chapter 6 - Setting up your database
+
+### Vercel
+
+Provides fast deployment of application, and integreates with Github. Comes with CICD out of the box.
+By connecting your GitHub repository, whenever you push changes to your main branch, Vercel will automatically redeploy your application with no configuration needed. When opening pull requests, you'll also have instant previews which allow you to catch deployment errors early and share a preview of your project with team members for feedback.
+
+### Postgres Database
+
+Postgres set up is also integrated into Vercel. Through the portal i was able to create a DB instance, specify the environments where it would be available.
+I then copied the env secrets into my codebase, and ran script to seed the DB.
+
+Through Vercel i was abel to interact with the DB as well, running SQL queries.
