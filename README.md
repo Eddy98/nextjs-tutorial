@@ -113,3 +113,49 @@ Postgres set up is also integrated into Vercel. Through the portal i was able to
 I then copied the env secrets into my codebase, and ran script to seed the DB.
 
 Through Vercel i was abel to interact with the DB as well, running SQL queries.
+
+## Chapet 7 - Fetching Data
+
+### API layer
+
+APIs are an intermediary layer between your application code and database. There are a few cases where you might use an API:
+
+- If you're using 3rd party services that provide an API.
+- If you're fetching data from the client, you want to have an API layer that runs on the server to avoid exposing your database secrets to the client.
+  In Next.js, you can create API endpoints using Route Handlers.
+
+There are a few cases where you have to write database queries:
+
+When creating your API endpoints, you need to write logic to interact with your database.
+If you are using React Server Components (fetching data on the server), you can skip the API layer, and query your database directly without risking exposing your database secrets to the client.
+
+### Server components
+
+By default, Next.js uses React Server Components
+
+- Server Components support promises, providing a simpler solution for asynchronous tasks like data fetching. You can use async/await syntax without reaching out for useEffect, useState or data fetching libraries.
+- Server Components execute on the server, so you can keep expensive data fetches and logic on the server and only send the result to the client.
+- As mentioned before, since Server Components execute on the server, you can query the database directly without an additional API layer.
+
+You can call sql inside any Server Component.
+
+However... there are two things you need to be aware of:
+
+- The data requests are unintentionally blocking each other, creating a request waterfall. (This is from the request we have added in `app/dashboard/page.tsx`, where we have sequentially added multiple fetches)
+- By default, Next.js prerenders routes to improve performance, this is called Static Rendering. So if your data changes, it won't be reflected in your dashboard.
+  Let's discuss number 1 in this chapter, then look into detail at number 2 in the next chapter.
+
+### What are request waterfalls?
+
+A "waterfall" refers to a sequence of network requests that depend on the completion of previous requests. In the case of data fetching, each request can only begin once the previous request has returned data.
+
+### Parallel data fetching
+
+In JavaScript, you can use the `Promise.all()` or `Promise.allSettled()` functions to initiate all promises at the same time. For example, in `data.ts`, we're using Promise.all() in the fetchCardData() function:
+
+By using this pattern, you can:
+
+- Start executing all data fetches at the same time, which can lead to performance gains.
+- Use a native JavaScript pattern that can be applied to any library or framework.
+
+There is the disadvantage that one request might slow down the rest
