@@ -45,6 +45,9 @@ export async function fetchLatestInvoices() {
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
     return latestInvoices;
   } catch (error) {
     console.error('Database Error:', error);
@@ -74,6 +77,8 @@ export async function fetchCardData() {
     const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
     const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
     const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     return {
       numberOfCustomers,

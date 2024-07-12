@@ -185,3 +185,50 @@ With dynamic rendering, content is rendered on the server for each user at reque
 - Request Time Information - Dynamic rendering allows you to access information that can only be known at request time, such as cookies or the URL search parameters.
 
 With dynamic rendering, your application is only as fast as your slowest data fetch.
+
+## Chapter 9 - Streaming
+
+### What is streaming
+
+Streaming is a data transfer technique that allows you to break down a route into smaller "chunks" and progressively stream them from the server to the client as they become ready.
+
+By streaming, you can prevent slow data requests from blocking your whole page. This allows the user to see and interact with parts of the page without waiting for all the data to load before any UI can be shown to the user.
+
+There are two ways you implement streaming in Next.js:
+
+- At the page level, with the loading.tsx file.
+- For specific components, with `<Suspense>`
+
+- `loading.tsx` is a special Next.js file built on top of Suspense, it allows you to create fallback UI to show as a replacement while page content loads.
+- Since <SideNav> is static, it's shown immediately. The user can interact with <SideNav> while the dynamic content is loading.
+- The user doesn't have to wait for the page to finish loading before navigating away (this is called interruptable navigation).
+
+### Adding a loading skeleton
+
+A loading skeleton is a simplified version of the UI. Many websites use them as a placeholder (or fallback) to indicate to users that the content is loading. Any UI you add in loading.tsx will be embedded as part of the static file, and sent first. Then, the rest of the dynamic content will be streamed from the server to the client.
+
+Now, the `loading.tsx` file will only apply to your dashboard overview page.
+
+Route groups allow you to organize files into logical groups without affecting the URL path structure. When you create a new folder using parentheses (), the name won't be included in the URL path. So /dashboard/(overview)/page.tsx becomes /dashboard.
+
+Here, you're using a **route group** to ensure loading.tsx only applies to your dashboard overview page. However, you can also use route groups to separate your application into sections (e.g. (marketing) routes and (shop) routes) or by teams for larger applications.
+
+### Streaming a compoentn
+
+So far, you're streaming a whole page. But you can also be more granular and stream specific components using React Suspense.
+
+Suspense allows you to defer rendering parts of your application until some condition is met (e.g. data is loaded). You can wrap your dynamic components in Suspense. Then, pass it a fallback component to show while the dynamic component loads.
+
+Where you place your Suspense boundaries will depend on a few things:
+
+1. How you want the user to experience the page as it streams.
+2. What content you want to prioritize.
+3. If the components rely on data fetching.
+
+- You could stream the whole page like we did with loading.tsx... but that may lead to a longer loading time if one of the components has a slow data fetch.
+- You could stream every component individually... but that may lead to UI popping into the screen as it becomes ready.
+- You could also create a staggered effect by streaming page sections. But you'll need to create wrapper components.
+
+Where you place your suspense boundaries will vary depending on your application. In general, it's good practice to move your data fetches down to the components that need it, and then wrap those components in Suspense. But there is nothing wrong with streaming the sections or the whole page if that's what your application needs.
+
+Don't be afraid to experiment with Suspense and see what works best, it's a powerful API that can help you create more delightful user experiences.
