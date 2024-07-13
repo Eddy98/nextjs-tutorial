@@ -232,3 +232,38 @@ Where you place your Suspense boundaries will depend on a few things:
 Where you place your suspense boundaries will vary depending on your application. In general, it's good practice to move your data fetches down to the components that need it, and then wrap those components in Suspense. But there is nothing wrong with streaming the sections or the whole page if that's what your application needs.
 
 Don't be afraid to experiment with Suspense and see what works best, it's a powerful API that can help you create more delightful user experiences.
+
+## Chapter 10 - Partial prerendering
+
+### Static vs. Dynamic Routes
+
+For most web apps built today, you either choose between static and dynamic rendering for your entire application, or for a specific route. And in Next.js, if you call a dynamic function in a route (like querying your database), the entire route becomes dynamic.
+
+However, most routes are not fully static or dynamic. For example, consider an ecommerce site. You might want to statically render the majority of the product information page, but you may want to fetch the user's cart and recommended products dynamically, this allows you show personalized content to your users.
+
+### What is partial prerendering
+
+Next.js 14 introduced an experimental version of Partial Prerendering – a new rendering model that allows you to combine the benefits of static and dynamic rendering in the same route. For example:
+
+When a user visits a route:
+
+- A static route shell that includes the navbar and product information is served, ensuring a fast initial load.
+- The shell leaves holes where dynamic content like the cart and recommended products will load in asynchronously.
+- The async holes are streamed in parallel, reducing the overall load time of the page.
+
+Partial Prerendering uses React's Suspense (which you learned about in the previous chapter) to defer rendering parts of your application until some condition is met (e.g. data is loaded).
+
+The Suspense fallback is embedded into the initial HTML file along with the static content. At build time (or during revalidation), the static content is prerendered to create a static shell. The rendering of dynamic content is postponed until the user requests the route.
+
+## Summary
+
+To recap, you've done a few things to optimize data fetching in your application:
+
+1. Created a database in the same region as your application code to reduce latency between your server and database.
+2. Fetched data on the server with React Server Components. This allows you to keep expensive data fetches and logic on the server, reduces the client-side JavaScript bundle, and prevents your database secrets from being exposed to the client.
+3. Used SQL to only fetch the data you needed, reducing the amount of data transferred for each request and the amount of JavaScript needed to transform the data in-memory.
+4. Parallelize data fetching with JavaScript - where it made sense to do so.
+5. Implemented Streaming to prevent slow data requests from blocking your whole page, and to allow the user to start interacting with the UI without waiting for everything to load.
+6. Move data fetching down to the components that need it, thus isolating which parts of your routes should be dynamic.
+
+In the next chapter, we'll look at two common patterns you might need to implement when fetching data: search and pagination.
