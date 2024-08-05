@@ -267,3 +267,61 @@ To recap, you've done a few things to optimize data fetching in your application
 6. Move data fetching down to the components that need it, thus isolating which parts of your routes should be dynamic.
 
 In the next chapter, we'll look at two common patterns you might need to implement when fetching data: search and pagination.
+
+## Chapter 11 - Serach and pagination
+
+For the search functionality we can use the URL serach parameters. But why? Well there are a couple of benefits
+
+- Bookmarkable and Shareable URLs: Since the search parameters are in the URL, users can bookmark the current state of the application, including their search queries and filters, for future reference or sharing.
+- Server-Side Rendering and Initial Load: URL parameters can be directly consumed on the server to render the initial state, making it easier to handle server rendering.
+- Analytics and Tracking: Having search queries and filters directly in the URL makes it easier to track user behavior without requiring additional client-side logic.
+
+### Adding the serach functionality
+
+- `useSearchParams` - Allows you to access the parameters of the current URL. For example, the search params for this URL /dashboard/invoices?page=1&query=pending would look like this: {page: '1', query: 'pending'}.
+- `usePathname` - Lets you read the current URL's pathname. For example, for the route /dashboard/invoices, usePathname would return '/dashboard/invoices'.
+- `useRouter` - Enables navigation between routes within client components programmatically. There are multiple methods you can use.
+
+Here's a quick overview of the implementation steps:
+
+1. Capture the user's input.
+2. Update the URL with the search params.
+3. Keep the URL in sync with the input field.
+4. Update the table to reflect the search query.
+
+We can see that the `Search` component has `use client` - This is a client component, which means that we can use event listeners and hooks
+
+`URLSearchParams` is a Web API that provides utility methods for manipulating the URL query parameters. Instead of creating a complex string literal, you can use it to get the params string like `?page=1&query=a`.
+
+---
+
+Page components also can access the URL search parameters, but instead of using a hook liek we did in the `Search component` since it was as client component, we can use
+`searchParams` prop.
+
+Page components accept a prop called searchParams, so you can pass the current URL params to the `<Table>` component.
+
+When to use the `useSearchParams()` hook vs. the searchParams prop?
+
+You might have noticed you used two different ways to extract search params. Whether you use one or the other depends on whether you're working on the client or the server.
+
+- `<Search>` is a Client Component, so you used the `useSearchParams()` hook to access the params from the client.
+
+- `<Table>` is a Server Component that fetches its own data, so you can pass the searchParams prop from the page to the component.
+
+As a general rule, if you want to read the params from the client, use the `useSearchParams()` hook as this avoids having to go back to the server.
+
+---
+
+One thing that we can optimize, is that we are updating the URL on each keystroke, meaning that we are querying to the database on each keystroke!
+
+**Debouncing** is a programming practice that limits the rate at which a function can fire. In our case, you only want to query the database when the user has stopped typing.
+
+```
+How Debouncing Works:
+
+1. Trigger Event: When an event that should be debounced (like a keystroke in the search box) occurs, a timer starts.
+2. Wait: If a new event occurs before the timer expires, the timer is reset.
+3. Execution: If the timer reaches the end of its countdown, the debounced function is executed.
+```
+
+### Adding Pagination
