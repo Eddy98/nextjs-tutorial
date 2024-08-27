@@ -268,7 +268,7 @@ To recap, you've done a few things to optimize data fetching in your application
 
 In the next chapter, we'll look at two common patterns you might need to implement when fetching data: search and pagination.
 
-## Chapter 11 - Serach and pagination
+## Chapter 11 - Search and pagination
 
 For the search functionality we can use the URL serach parameters. But why? Well there are a couple of benefits
 
@@ -325,3 +325,79 @@ How Debouncing Works:
 ```
 
 ### Adding Pagination
+
+Adding pagination allows users to navigate through the different pages to view all the invoices. Let's see how you can implement pagination using URL params, just like you did with search.
+
+## Chapter 12 - Mutating Data
+
+### What are server actions?
+
+React Server actions allow you to run asycn code directly on the the server. They remove the need to create an API layer to mutate our data.
+Instead, you write asynchronous functions that execute on the server and can be invoked from your Client or Server Components.
+
+Server actions achieve security from different types of attacks through techniques like POST requests, encrypted closures, strict input checks, error message hashing and host restrictions.
+
+### Using forms with Server Actions
+
+In React, you can use the action attribute in the `<form>` element to invoke actions. The action will automatically receive the native FormData object, containing the captured data.
+
+For example:
+
+```Javascript
+// Server Component
+export default function Page() {
+  // Action
+  async function create(formData: FormData) {
+    'use server';
+
+    // Logic to mutate data...
+  }
+
+  // Invoke the action using the "action" attribute
+  return <form action={create}>...</form>;
+}
+```
+
+An advantage of invoking a Server Action within a Server Component is progressive enhancement - forms work even if JavaScript is disabled on the client.
+
+### Next.js with Server Actions
+
+Server Actions are also deeply integrated with Next.js caching. When a form is submitted through a Server Action, not only can you use the action to mutate data, but you can also revalidate the associated cache using APIs like revalidatePath and revalidateTag.
+
+Creating a Server Actions we create a file, which in this case we are calling `actions.ts` and it lives in the `/lib` folder. First thing we do is as the
+`use server` directive. By adding this we are marking the exported functions within the file as Server Actions.
+
+You can also write Server Actions directly inside Server Components by adding "use server" inside the action. But for this course, we'll keep them all organized in a separate file.
+
+Here are the steps you'll take to create a new invoice:
+
+- Create a form to capture the user's input.
+
+  Form component is using the native html `form` element, which contains a prop called `action` that we will be using
+
+- Create a Server Action and invoke it from the form.
+
+  We are creating the server action by creating a file that has `use server` in the top, now all the functions here will be running in the server.
+
+- Inside your Server Action, extract the data from the formData object.
+
+  After we pass this server action to the `action` prop of the `form` component, it will trigger the function on submit, passing all the form data
+
+  ```
+  Good to know: In HTML, you'd pass a URL to the action attribute. This URL would be the destination where your form data should be submitted (usually an API endpoint).
+
+  However, in React, the action attribute is considered a special prop - meaning React builds on top of it to allow actions to be invoked.
+
+  Behind the scenes, Server Actions create a POST API endpoint. This is why you don't need to create API endpoints manually when using Server Actions.
+  ```
+
+- Validate and prepare the data to be inserted into your database.
+
+  We are using `z` lib to validate the data
+
+- Insert the data and handle any errors.
+- Revalidate the cache and redirect the user back to invoices page.
+
+Next.js has a Client-side Router Cache that stores the route segments in the user's browser for a time. Along with prefetching, this cache ensures that users can quickly navigate between routes while reducing the number of requests made to the server.
+
+Since you're updating the data displayed in the invoices route, you want to clear this cache and trigger a new request to the server. You can do this with the revalidatePath function from Next.js:
